@@ -16,35 +16,45 @@ local init_time_ms = 500
 
 -- <leader>ta Toggle execution with args (create edit when needed)
 
--- <leader>xa Execute current file in terminal (horizontal)
-map('n', '<leader>xa', function()
-  local file = vim.fn.expand '%'
+-- <leader>xc Edit arguments configs
+map('n', '<leader>xc', function()
   local file_dir = vim.fn.expand '%:p:h'
   local args_file = file_dir .. '/' .. argsfilename
+  vim.cmd('split | edit' .. args_file)
+end, { desc = 'Edit arguments config' })
 
-  -- split and open terminal
-  vim.cmd(':below' .. term_height .. 'split | terminal')
-  vim.wait(init_time_ms)
-  -- local term = vim.api.nvim_get_current_buf()
-
-  vim.api.nvim_chan_send(vim.b.terminal_job_id, 'cd ' .. file_dir .. '\n')
-  vim.api.nvim_chan_send(vim.b.terminal_job_id, 'which python && python --version\n')
-
+-- <leader>xa Execute current file in terminal (horizontal)
+map('n', '<leader>xa', function()
+  local file = vim.fn.expand '%:t'
+  local file_dir = vim.fn.expand '%:p:h'
+  local args_file = file_dir .. '/' .. argsfilename
   local run_cmd = 'python ' .. file
 
   if USE_ARG then
     if vim.fn.filereadable(args_file) == 1 then
-      -- args file found
-      vim.api.nvim_chan_send(vim.b.terminal_job_id, run_cmd .. ' $(cat ' .. args_file .. ')')
+      -- .args file found
+      -- Split and open terminal
+      vim.cmd(':below' .. term_height .. 'split | terminal')
+      vim.wait(init_time_ms)
+      vim.api.nvim_chan_send(vim.b.terminal_job_id, 'cd ' .. file_dir .. '\n')
+      vim.api.nvim_chan_send(vim.b.terminal_job_id, 'which python && python --version\n')
+      -- Run with args
+      vim.api.nvim_chan_send(vim.b.terminal_job_id, run_cmd .. ' $(cat ' .. argsfilename .. ')')
       vim.cmd 'startinsert'
     else
-      -- args file not found, create or continue
+      -- .args file not found
       vim.schedule(function()
         local create = vim.fn.confirm('.args not found. Create it?', '&Yes\n&No', 1)
         if create == 1 then
-          vim.cmd('edit ' .. args_file)
+          -- Create .args
+          vim.cmd(':below' .. term_height .. 'split | edit' .. args_file)
         else
-          -- run without args
+          -- Split and open terminal
+          vim.cmd(':below' .. term_height .. 'split | terminal')
+          vim.wait(init_time_ms)
+          vim.api.nvim_chan_send(vim.b.terminal_job_id, 'cd ' .. file_dir .. '\n')
+          vim.api.nvim_chan_send(vim.b.terminal_job_id, 'which python && python --version\n')
+          -- Run without args
           vim.api.nvim_chan_send(vim.b.terminal_job_id, run_cmd)
           vim.cmd 'startinsert'
         end
@@ -52,6 +62,11 @@ map('n', '<leader>xa', function()
     end
   else
     -- use_arg = false run without args
+    -- split and open terminal
+    vim.cmd(':below' .. term_height .. 'split | terminal')
+    vim.wait(init_time_ms)
+    vim.api.nvim_chan_send(vim.b.terminal_job_id, 'cd ' .. file_dir .. '\n')
+    vim.api.nvim_chan_send(vim.b.terminal_job_id, 'which python && python --version\n')
     vim.api.nvim_chan_send(vim.b.terminal_job_id, run_cmd)
     vim.cmd 'startinsert'
   end
@@ -59,33 +74,36 @@ end, { desc = 'Run python file (horizontal)', buffer = true })
 
 -- <leader>xv Execute current file in terminal (vertical)
 map('n', '<leader>xv', function()
-  local file = vim.fn.expand '%'
+  local file = vim.fn.expand '%:t'
   local file_dir = vim.fn.expand '%:p:h'
   local args_file = file_dir .. '/' .. argsfilename
-
-  -- split and open terminal
-  vim.cmd 'vsplit | terminal'
-  vim.wait(init_time_ms)
-  -- local term = vim.api.nvim_get_current_buf()
-
-  vim.api.nvim_chan_send(vim.b.terminal_job_id, 'cd ' .. file_dir .. '\n')
-  vim.api.nvim_chan_send(vim.b.terminal_job_id, 'which python && python --version\n')
-
   local run_cmd = 'python ' .. file
 
   if USE_ARG then
     if vim.fn.filereadable(args_file) == 1 then
-      -- args file found
-      vim.api.nvim_chan_send(vim.b.terminal_job_id, run_cmd .. ' $(cat ' .. args_file .. ')')
+      -- .args file found
+      -- Split and open terminal
+      vim.cmd 'vsplit | terminal'
+      vim.wait(init_time_ms)
+      vim.api.nvim_chan_send(vim.b.terminal_job_id, 'cd ' .. file_dir .. '\n')
+      vim.api.nvim_chan_send(vim.b.terminal_job_id, 'which python && python --version\n')
+      -- Run with args
+      vim.api.nvim_chan_send(vim.b.terminal_job_id, run_cmd .. ' $(cat ' .. argsfilename .. ')')
       vim.cmd 'startinsert'
     else
-      -- args file not found, create or continue
+      -- .args file not found
       vim.schedule(function()
         local create = vim.fn.confirm('.args not found. Create it?', '&Yes\n&No', 1)
         if create == 1 then
-          vim.cmd('edit ' .. args_file)
+          -- Create .args
+          vim.cmd('vsplit | edit' .. args_file)
         else
-          -- run without args
+          -- Split and open terminal
+          vim.cmd 'vsplit | terminal'
+          vim.wait(init_time_ms)
+          vim.api.nvim_chan_send(vim.b.terminal_job_id, 'cd ' .. file_dir .. '\n')
+          vim.api.nvim_chan_send(vim.b.terminal_job_id, 'which python && python --version\n')
+          -- Run without args
           vim.api.nvim_chan_send(vim.b.terminal_job_id, run_cmd)
           vim.cmd 'startinsert'
         end
@@ -93,6 +111,11 @@ map('n', '<leader>xv', function()
     end
   else
     -- use_arg = false run without args
+    -- split and open terminal
+    vim.cmd 'vsplit | terminal'
+    vim.wait(init_time_ms)
+    vim.api.nvim_chan_send(vim.b.terminal_job_id, 'cd ' .. file_dir .. '\n')
+    vim.api.nvim_chan_send(vim.b.terminal_job_id, 'which python && python --version\n')
     vim.api.nvim_chan_send(vim.b.terminal_job_id, run_cmd)
     vim.cmd 'startinsert'
   end
