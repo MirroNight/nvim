@@ -84,7 +84,7 @@ vim.opt.whichwrap:append '<,>,[,]'
 -- Global defaults (optional, but good practice)
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
-vim.opt.expandtab = false -- Use tabs by default
+vim.opt.expandtab = true
 
 -- Autocmd for Python files (4 spaces)
 vim.api.nvim_create_autocmd('FileType', {
@@ -94,7 +94,7 @@ vim.api.nvim_create_autocmd('FileType', {
 
 -- Autocmd for HTML/JavaScript files (2 spaces)
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'html', 'javascript', 'typescript', 'css' },
+  pattern = { 'lua', 'html', 'javascript', 'typescript', 'css' },
   command = 'setlocal tabstop=2 shiftwidth=2 expandtab softtabstop=2',
 })
 
