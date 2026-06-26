@@ -48,7 +48,7 @@ local function GetMakefileTemplate(main, bin)
     'all: $(BIN)',
     '',
     '$(BIN):',
-    '	$(CC) $(SRC) -o $(BIN) $(CFLAGS) $(LDFLAGS) $(LBLIBS)',
+    '	$(CC) $(SRC) -o $(BIN) $(CFLAGS) $(LDFLAGS) $(LDLIBS)',
     '',
     '.PHONY: all clean debug release ' .. bin,
     '',
