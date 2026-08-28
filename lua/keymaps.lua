@@ -10,6 +10,9 @@ map('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 map('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- Open LSP code action list
+map('n', '<leader>ca', vim.lsp.buf.code_action, { buffer = bufnr })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -183,8 +186,8 @@ map('i', '<C-z>', '<C-o>D', { desc = 'Delete to EOL' })
 map('v', '<C-f>', 'y<ESC>/<C-r>"<CR>:%s//', { desc = 'Replace selected part' })
 
 -- Execute (Visual)
-map('v', '<C-x>', 'y<ESC>:split|term<CR>pa', { desc = 'Execute selected code (horizontal)' })
-map('v', '<C-v>', 'y<ESC>:vsplit|term<CR>pa', { desc = 'Execute selected code (vertical)' })
+map('v', '<leader>xh', 'y<ESC>:split|term<CR>pa', { desc = 'Execute selected code (horizontal)' })
+map('v', '<leader>xv', 'y<ESC>:vsplit|term<CR>pa', { desc = 'Execute selected code (vertical)' })
 -- -- Ctrl-d to disconnect terminal
 
 -- See `.config/nvim/lua/ftplugin` for configs executing different code file.
