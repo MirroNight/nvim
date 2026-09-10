@@ -84,8 +84,20 @@ end, { desc = 'Toggle line wrap' })
 
 -- <F3> Toggle line number (Normal/Insert/Visual)
 map({ 'n', 'i', 'v' }, '<F3>', function()
-  vim.cmd 'set invnumber'
-end, { desc = 'Toggle line number' })
+  if vim.wo.number and not vim.wo.relativenumber then
+    -- absolute -> relative
+    vim.wo.number = true
+    vim.wo.relativenumber = true
+  elseif vim.wo.number and vim.wo.relativenumber then
+    -- relative -> none
+    vim.wo.number = false
+    vim.wo.relativenumber = false
+  else
+    -- none -> absolute
+    vim.wo.number = true
+    vim.wo.relativenumber = false
+  end
+end, { desc = 'Toggle line number (Absolute/Relative/None)' })
 
 -- <F4> Fold by paired braces (Normal/Insert)
 map('n', '<F4>', '%zf%', { desc = 'Fold by paired braces' })
